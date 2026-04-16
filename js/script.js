@@ -45,6 +45,8 @@ function renderList() {
   });
 
   totalDisplay.textContent = total;
+
+  renderChart();
 }
 
 function deleteTransaction(index) {
@@ -68,3 +70,42 @@ function loadFromLocalStorage() {
 }
 
 loadFromLocalStorage();
+
+function getCategoryData() {
+  let food = 0;
+  let transport = 0;
+  let fun = 0;
+
+  transactions.forEach(t => {
+    if (t.category === "Food") {
+      food += parseInt(t.amount);
+    } else if (t.category === "Transport") {
+      transport += parseInt(t.amount);
+    } else if (t.category === "Fun") {
+      fun += parseInt(t.amount);
+    }
+  });
+
+  return [food, transport, fun];
+}
+let chart;
+
+function renderChart() {
+  const data = getCategoryData();
+
+  const ctx = document.getElementById("chart").getContext("2d");
+
+  if (chart) {
+    chart.destroy();
+  }
+
+  chart = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["Food", "Transport", "Fun"],
+      datasets: [{
+        data: data
+      }]
+    }
+  });
+}
