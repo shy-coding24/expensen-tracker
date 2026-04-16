@@ -5,6 +5,7 @@ const categoryInput = document.getElementById("category");
 const list = document.getElementById("list");
 const totalDisplay = document.getElementById("total");
 let total = 0;
+let transactions = [];
 
 form.addEventListener("submit", function(e) {
   e.preventDefault();
@@ -19,22 +20,51 @@ form.addEventListener("submit", function(e) {
 });
 
 function addTransaction(name, amount, category) {
-  const li = document.createElement("li");
+  const transaction = { name, amount, category };
+  transactions.push(transaction);
 
-  li.innerHTML = `
-    ${name} - Rp ${amount} (${category})
-    <button onclick="deleteTransaction(this, ${amount})">X</button>
-  `;
+  saveToLocalStorage();
+  renderList();
+}
 
-  list.appendChild(li);
+function renderList() {
+  list.innerHTML = "";
+  total = 0;
 
-  total += parseInt(amount);
+  transactions.forEach((t, index) => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      ${t.name} - Rp ${t.amount} (${t.category})
+      <button onclick="deleteTransaction(${index})">X</button>
+    `;
+
+    list.appendChild(li);
+
+    total += parseInt(t.amount);
+  });
+
   totalDisplay.textContent = total;
 }
 
-function deleteTransaction(button, amount) {
-  button.parentElement.remove();
+function deleteTransaction(index) {
+  transactions.splice(index, 1);
 
-  total -= parseInt(amount);
-  totalDisplay.textContent = total;
+  saveToLocalStorage();
+  renderList();
 }
+
+function saveToLocalStorage() {
+  localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
+function loadFromLocalStorage() {
+  const data = localStorage.getItem("transactions");
+
+  if (data) {
+    transactions = JSON.parse(data);
+    renderList();
+  }
+}
+
+loadFromLocalStorage();
