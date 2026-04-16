@@ -3,6 +3,8 @@ const nameInput = document.getElementById("name");
 const amountInput = document.getElementById("amount");
 const categoryInput = document.getElementById("category");
 const list = document.getElementById("list");
+const totalDisplay = document.getElementById("total");
+let total = 0;
 
 form.addEventListener("submit", function(e) {
   e.preventDefault();
@@ -21,12 +23,18 @@ function addTransaction(name, amount, category) {
 
   li.innerHTML = `
     ${name} - Rp ${amount} (${category})
-    <button onclick="deleteTransaction(this)">X</button>
+    <button onclick="deleteTransaction(this, ${amount})">X</button>
   `;
 
   list.appendChild(li);
+
+  total += parseInt(amount);
+  totalDisplay.textContent = total;
 }
 
-function deleteTransaction(button) {
+function deleteTransaction(button, amount) {
   button.parentElement.remove();
+
+  total -= parseInt(amount);
+  totalDisplay.textContent = total;
 }
