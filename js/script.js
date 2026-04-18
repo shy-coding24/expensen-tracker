@@ -1,4 +1,3 @@
-// ambil elemen
 const form = document.getElementById("expense-form");
 const nameInput = document.getElementById("name");
 const amountInput = document.getElementById("amount");
@@ -6,12 +5,9 @@ const categoryInput = document.getElementById("category");
 const list = document.getElementById("list");
 const totalDisplay = document.getElementById("total");
 
-// data
 let transactions = [];
 let total = 0;
 let chart = null; 
-
-// submit form
 form.addEventListener("submit", function(e) {
   e.preventDefault();
 
@@ -24,13 +20,22 @@ form.addEventListener("submit", function(e) {
   form.reset();
 });
 
-// tambah transaksi
 function addTransaction(name, amount, category) {
   const transaction = { name, amount, category };
   transactions.push(transaction);
 
   saveToLocalStorage();
   renderList();
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
 }
 
 // render list + total
@@ -42,8 +47,16 @@ function renderList() {
     const li = document.createElement("li");
 
     li.innerHTML = `
-      ${t.name} - Rp ${t.amount} (${t.category})
-      <button onclick="deleteTransaction(${index})">X</button>
+      <div class="expense-info">
+        <div class="expense-name">${escapeHtml(t.name)}</div>
+        <div class="expense-meta">
+          <span><i class="fas fa-folder-open"></i> ${escapeHtml(t.category)}</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="expense-amount">Rp ${Number(t.amount).toLocaleString('id-ID')}</div>
+        <button class="delete-btn" onclick="deleteTransaction(${index})"><i class="fas fa-trash-alt"></i></button>
+      </div>
     `;
 
     list.appendChild(li);
@@ -51,12 +64,20 @@ function renderList() {
     total += parseInt(t.amount);
   });
 
+  if (transactions.length === 0) {
+    const emptyLi = document.createElement("li");
+    emptyLi.className = "empty-message";
+    emptyLi.style.justifyContent = "center";
+    emptyLi.innerHTML = `<i class="fas fa-receipt"></i> No expenses yet · add your first transaction ✨`;
+    emptyLi.style.pointerEvents = "none";
+    list.appendChild(emptyLi);
+  }
+
   totalDisplay.textContent = total;
 
   renderChart(); 
 }
 
-// hapus
 function deleteTransaction(index) {
   transactions.splice(index, 1);
 
@@ -64,12 +85,10 @@ function deleteTransaction(index) {
   renderList();
 }
 
-// simpan
 function saveToLocalStorage() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
-// load awal
 function loadFromLocalStorage() {
   const data = localStorage.getItem("transactions");
 
@@ -80,8 +99,6 @@ function loadFromLocalStorage() {
 }
 
 loadFromLocalStorage();
-
-// ambil data kategori
 function getCategoryData() {
   let food = 0;
   let transport = 0;
@@ -96,7 +113,6 @@ function getCategoryData() {
   return [food, transport, fun];
 }
 
-// render chart
 function renderChart() {
   const data = getCategoryData();
 
@@ -111,8 +127,41 @@ function renderChart() {
     data: {
       labels: ["Food", "Transport", "Fun"],
       datasets: [{
-        data: data
+        data: data,
+        backgroundColor: ['#3b8ea5', '#5f9c7b', '#e6b17e'],
+        borderWidth: 0,
+        hoverOffset: 8,
       }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: 11, family: "'Inter', system-ui" },
+            boxWidth: 10,
+            padding: 12,
+            color: '#2c4b5e'
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.label || '';
+              let value = context.raw;
+              let totalAmount = data.reduce((a,b) => a+b, 0);
+              let percentage = totalAmount > 0 ? ((value / totalAmount)*100).toFixed(1) : 0;
+              return `${label}: Rp ${value.toLocaleString('id-ID')} (${percentage}%)`;
+            }
+          }
+        }
+      },
+      layout: {
+        padding: 10
+      }
     }
   });
 }
+window.deleteTransaction = deleteTransaction;
