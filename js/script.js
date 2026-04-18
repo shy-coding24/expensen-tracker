@@ -1,12 +1,17 @@
+// ambil elemen
 const form = document.getElementById("expense-form");
 const nameInput = document.getElementById("name");
 const amountInput = document.getElementById("amount");
 const categoryInput = document.getElementById("category");
 const list = document.getElementById("list");
 const totalDisplay = document.getElementById("total");
-let total = 0;
-let transactions = [];
 
+// data
+let transactions = [];
+let total = 0;
+let chart = null; 
+
+// submit form
 form.addEventListener("submit", function(e) {
   e.preventDefault();
 
@@ -19,6 +24,7 @@ form.addEventListener("submit", function(e) {
   form.reset();
 });
 
+// tambah transaksi
 function addTransaction(name, amount, category) {
   const transaction = { name, amount, category };
   transactions.push(transaction);
@@ -27,6 +33,7 @@ function addTransaction(name, amount, category) {
   renderList();
 }
 
+// render list + total
 function renderList() {
   list.innerHTML = "";
   total = 0;
@@ -46,9 +53,10 @@ function renderList() {
 
   totalDisplay.textContent = total;
 
-  renderChart();
+  renderChart(); 
 }
 
+// hapus
 function deleteTransaction(index) {
   transactions.splice(index, 1);
 
@@ -56,10 +64,12 @@ function deleteTransaction(index) {
   renderList();
 }
 
+// simpan
 function saveToLocalStorage() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
+// load awal
 function loadFromLocalStorage() {
   const data = localStorage.getItem("transactions");
 
@@ -71,25 +81,22 @@ function loadFromLocalStorage() {
 
 loadFromLocalStorage();
 
+// ambil data kategori
 function getCategoryData() {
   let food = 0;
   let transport = 0;
   let fun = 0;
 
   transactions.forEach(t => {
-    if (t.category === "Food") {
-      food += parseInt(t.amount);
-    } else if (t.category === "Transport") {
-      transport += parseInt(t.amount);
-    } else if (t.category === "Fun") {
-      fun += parseInt(t.amount);
-    }
+    if (t.category === "Food") food += parseInt(t.amount);
+    else if (t.category === "Transport") transport += parseInt(t.amount);
+    else if (t.category === "Fun") fun += parseInt(t.amount);
   });
 
   return [food, transport, fun];
 }
-let chart;
 
+// render chart
 function renderChart() {
   const data = getCategoryData();
 
