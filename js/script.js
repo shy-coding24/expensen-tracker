@@ -4,7 +4,6 @@ const amountInput = document.getElementById("amount");
 const categoryInput = document.getElementById("category");
 const list = document.getElementById("list");
 const totalDisplay = document.getElementById("total");
-let chart;
 let total = 0;
 let transactions = [];
 
