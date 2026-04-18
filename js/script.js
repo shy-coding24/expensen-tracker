@@ -6,6 +6,7 @@ const list = document.getElementById("list");
 const totalDisplay = document.getElementById("total");
 let total = 0;
 let transactions = [];
+let chart;
 
 form.addEventListener("submit", function(e) {
   e.preventDefault();
