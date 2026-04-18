@@ -2,39 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Expense Tracker</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Financi — Modern Expense Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>Expense Tracker</h1>
+<div class="tracker-container">
+  
+  <div class="app-header">
+    <h1>
+      <i class="fas fa-wallet"></i> 
+      Financi
+    </h1>
+    <div class="sub-badge">
+      <i class="fas fa-chart-pie"></i> smart tracker
+    </div>
+  </div>
 
-  <!-- Form Input -->
-  <form id="expense-form">
-    <input type="text" id="name" placeholder="Item Name" required>
-    <input type="number" id="amount" placeholder="Amount" required>
+  <div class="form-card">
+    <form id="expense-form" style="display: flex; flex-direction: column; gap: 0;">
+      <div class="input-group">
+        <div class="input-field">
+          <label><i class="fas fa-tag"></i> Item</label>
+          <input type="text" id="name" placeholder="e.g., Groceries, Coffee" required>
+        </div>
+        <div class="input-field">
+          <label><i class="fas fa-coins"></i> Amount (Rp)</label>
+          <input type="number" id="amount" placeholder="Amount" required>
+        </div>
+        <div class="input-field">
+          <label><i class="fas fa-layer-group"></i> Category</label>
+          <select id="category" required>
+            <option value="">Select Category</option>
+            <option value="Food">🍔 Food</option>
+            <option value="Transport">🚗 Transport</option>
+            <option value="Fun">🎉 Fun</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn-add">
+        <i class="fas fa-plus-circle"></i> Add Expense
+      </button>
+    </form>
+  </div>
 
-    <select id="category" required>
-      <option value="">Select Category</option>
-      <option value="Food">Food</option>
-      <option value="Transport">Transport</option>
-      <option value="Fun">Fun</option>
-    </select>
+  <div class="total-section">
+    <div class="total-label">
+      <i class="fas fa-chart-line"></i> Total spent
+    </div>
+    <div class="total-amount">
+      Rp <span id="total">0</span>
+    </div>
+  </div>
 
-    <button type="submit">Add</button>
-  </form>
+  <div class="dashboard-grid">
+    <div class="expense-list-section">
+      <div class="section-title">
+        <i class="fas fa-list-ul"></i> Recent transactions
+      </div>
+      <ul id="list" class="expense-ul"></ul>
+    </div>
+    <div class="chart-section">
+      <div class="section-title">
+        <i class="fas fa-chart-pie"></i> Spending by category
+      </div>
+      <canvas id="chart" width="300" height="300" style="max-width:100%; height:auto;"></canvas>
+    </div>
+  </div>
 
-  <!-- Total -->
-  <h2>Total: Rp <span id="total">0</span></h2>
+</div>
 
-  <!-- List -->
-  <ul id="list"></ul>
-
-  <!-- Chart -->
-  <canvas id="chart" width="300" height="300"></canvas>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="js/script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
